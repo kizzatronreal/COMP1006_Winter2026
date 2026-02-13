@@ -1,17 +1,18 @@
 <?php
-//TODO:
+require "includes/header.php";
 require "includes/connect.php";
 
-/*
-  TODO:
-  1. Write a SELECT query to get all subscribers
-  2. Add ORDER BY subscribed_at DESC
-  3. Prepare the statement
-  4. Execute the statement
-  5. Fetch all results into $subscribers
-*/
+// query to get all subscribers
+$sql = "SELECT * FROM subscribers ORDER BY subscribed_at DESC";
 
-$subscribers = []; // placeholder
+// Prepare the statement
+$stmt = $pdo->prepare($sql);
+
+// Execute the statement
+$stmt->execute();
+
+// Fetch all results into $subscribers
+$subscribers = $stmt->fetchAll();
 ?>
 
 <main class="container mt-4">
@@ -31,7 +32,16 @@ $subscribers = []; // placeholder
         </tr>
       </thead>
       <tbody>
-        <!-- TODO: Loop through $subscribers and output each row -->
+        <!-- Loop through $subscribers and output each row -->
+        <?php foreach ($subscribers as $subscriber): ?>
+          <tr>
+            <td><?= htmlspecialchars($subscriber['id']); ?></td>
+            <td><?= htmlspecialchars($subscriber['first_name']); ?></td>
+            <td><?= htmlspecialchars($subscriber['last_name']); ?></td>
+            <td><?= htmlspecialchars($subscriber['email']); ?></td>
+            <td><?= htmlspecialchars($subscriber['subscribed_at']); ?></td>
+          </tr>
+        <?php endforeach; ?>
       </tbody>
     </table>
   <?php endif; ?>

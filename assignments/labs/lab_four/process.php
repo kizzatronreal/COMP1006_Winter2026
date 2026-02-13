@@ -1,16 +1,39 @@
 <?php
 require "includes/header.php";
-//  TODO: connect to the database 
+require "includes/connect.php";
 
-//   TODO: Grab form data (no validation or sanitization for this lab)
+// Check form submission
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    die('Invalid request');
+}
 
-/*
-  1. Write an INSERT statement with named placeholders
-  2. Prepare the statement
-  3. Execute the statement with an array of values
-  4.
+// Grab form data
+$firstName = trim(filter_input(INPUT_POST, 'first_name', FILTER_SANITIZE_SPECIAL_CHARS));
+$lastName = trim(filter_input(INPUT_POST, 'last_name', FILTER_SANITIZE_SPECIAL_CHARS));
+$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
 
-*/
+// Write an INSERT statement with named placeholders
+$sql = "
+    INSERT INTO subscribers (
+        first_name,
+        last_name,
+        email
+    ) VALUES (
+        :first_name,
+        :last_name,
+        :email
+    )
+";
+
+// Prepare the statement
+$stmt = $pdo->prepare($sql);
+
+// Execute the statement with an array of values
+$stmt->execute([
+    ':first_name' => $firstName,
+    ':last_name' => $lastName,
+    ':email' => $email
+]);
 
 ?>
 <!DOCTYPE html>
@@ -27,8 +50,8 @@ require "includes/header.php";
     <main class="container mt-4">
         <h2>Thank You for Subscribing</h2>
 
-        <!-- TODO: Display a confirmation message -->
-        <!-- Example: "Thanks, Name! You have been added to our mailing list." -->
+        <!-- Display a confirmation message -->
+        <p>Thanks, <?= htmlspecialchars($firstName . ' ' . $lastName); ?>! You have been added to our mailing list.</p>
 
 
         <p class="mt-3">
